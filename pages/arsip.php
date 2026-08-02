@@ -76,8 +76,8 @@ if (in_array($sub,['kelola_arsip','lihat_arsip','cari_arsip','riwayat_arsip'])):
         <div class="card-title">
             <?= $sub==='kelola_arsip'?'📁 Kelola Arsip Digital':($sub==='lihat_arsip'?'📂 Lihat Arsip':'📋 Daftar Arsip') ?>
         </div>
-        <div class="flex gap-2">
-            <div class="search-input-wrap" style="width:220px;"><span class="search-icon">🔍</span><input type="text" id="tableSearch" placeholder="Cari dokumen..."></div>
+        <div class="flex gap-2" style="flex-wrap: wrap;">
+            <div class="search-input-wrap" style="flex: 1; min-width: 130px; max-width: 220px;"><span class="search-icon">🔍</span><input type="text" id="tableSearch" placeholder="Cari dokumen..." style="width: 100%;"></div>
             <?php if(in_array($role,['admin','admin_arsip'])): ?>
             <button class="btn btn-success btn-sm" onclick="openModal('modalUploadArsip')">⬆️ Upload Baru</button>
             <?php endif; ?>
@@ -238,8 +238,8 @@ elseif ($sub === 'pencarian_arsip'): ?>
 <div class="card">
     <div class="card-header"><div class="card-title">🔍 Pencarian Arsip</div></div>
     <div class="card-body">
-        <div class="flex gap-3" style="margin-bottom:20px;">
-            <div class="search-input-wrap" style="flex:1;"><span class="search-icon">🔍</span><input type="text" id="cariQuery" placeholder="Ketik nama dokumen, kategori, atau tahun..."></div>
+        <div class="flex gap-3" style="margin-bottom:20px; flex-wrap: wrap;">
+            <div class="search-input-wrap" style="flex:1; min-width: 200px;"><span class="search-icon">🔍</span><input type="text" id="cariQuery" placeholder="Ketik nama dokumen, kategori, atau tahun..." style="width: 100%;"></div>
             <select id="cariKat" style="padding:10px 14px;border:1.5px solid #d4e4da;border-radius:8px;font-size:14px;">
                 <option value="">Semua Kategori</option>
                 <?php foreach($byKat as $k=>$j): ?><option value="<?= $k ?>"><?= $k ?></option><?php endforeach; ?>

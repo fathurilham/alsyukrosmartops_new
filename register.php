@@ -11,13 +11,24 @@ if ($_SERVER['REQUEST_METHOD']==='POST') {
     elseif (strlen($password)<6) { $error='Password minimal 6 karakter.'; }
     elseif (!filter_var($email,FILTER_VALIDATE_EMAIL)) { $error='Format email tidak valid.'; }
     else {
-        $users=getUsers(); $exists=false;
-        foreach($users as $u){if($u['username']===$username||$u['email']===$email){$exists=true;break;}}
-        if($exists){$error='Username atau email sudah terdaftar.';}
-        else{
-            $users[]=['id'=>count($users)+1,'name'=>$name,'username'=>$username,'email'=>$email,
-                'password'=>password_hash($password,PASSWORD_DEFAULT),'role'=>$role,'unit'=>$unit?:'Umum','created_at'=>date('Y-m-d')];
-            saveUsers($users); header('Location: index.php?registered=1'); exit();
+        $stmt = $conn->prepare("SELECT id FROM users WHERE username=? OR email=?");
+        $stmt->bind_param("ss", $username, $email);
+        $stmt->execute();
+        $res = $stmt->get_result();
+        if ($res->num_rows > 0) {
+            $error = 'Username atau email sudah terdaftar.';
+        } else {
+            $hashed = password_hash($password, PASSWORD_DEFAULT);
+            $unit_val = $unit ?: 'Umum';
+            $date_val = date('Y-m-d');
+            $ins = $conn->prepare("INSERT INTO users (name, username, email, password, role, unit, created_at) VALUES (?, ?, ?, ?, ?, ?, ?)");
+            $ins->bind_param("sssssss", $name, $username, $email, $hashed, $role, $unit_val, $date_val);
+            if ($ins->execute()) {
+                header('Location: index.php?registered=1');
+                exit();
+            } else {
+                $error = 'Terjadi kesalahan sistem, silakan coba lagi.';
+            }
         }
     }
 }

@@ -2,7 +2,7 @@
 // ===== DASHBOARD HOME =====
 // Aggregated stats & quick actions per role
 $inv   = $conn->query("SELECT * FROM inventory")->fetch_all(MYSQLI_ASSOC);
-$pjm   = $conn->query("SELECT * FROM peminjaman")->fetch_all(MYSQLI_ASSOC);
+$pjm   = $conn->query("SELECT * FROM peminjaman ORDER BY CAST(SUBSTRING(kode, 5) AS UNSIGNED) ASC")->fetch_all(MYSQLI_ASSOC);
 $kryw  = $conn->query("SELECT * FROM karyawan")->fetch_all(MYSQLI_ASSOC);
 $evs   = $conn->query("SELECT * FROM event")->fetch_all(MYSQLI_ASSOC);
 $maint = $conn->query("SELECT * FROM maintenance")->fetch_all(MYSQLI_ASSOC);

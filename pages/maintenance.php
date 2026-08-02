@@ -7,7 +7,7 @@
  */
 
 $fasilitas = $conn->query("SELECT * FROM maintenance")->fetch_all(MYSQLI_ASSOC);
-$requests  = $conn->query("SELECT * FROM request_maint")->fetch_all(MYSQLI_ASSOC);
+$requests  = $conn->query("SELECT * FROM request_maint ORDER BY id DESC")->fetch_all(MYSQLI_ASSOC);
 
 $baik      = count(array_filter($fasilitas, fn($f)=>$f['kondisi']==='baik'));
 $perbaikan = count(array_filter($fasilitas, fn($f)=>$f['kondisi']==='perbaikan'));
@@ -86,8 +86,8 @@ if ($sub === 'kelola_fasilitas'): ?>
 <div class="card">
     <div class="card-header">
         <div class="card-title">🏗️ Data Fasilitas Sekolah</div>
-        <div class="flex gap-2">
-            <div class="search-input-wrap" style="width:200px;"><span class="search-icon">🔍</span><input type="text" id="tableSearch" placeholder="Cari fasilitas..."></div>
+        <div class="flex gap-2" style="flex-wrap: wrap;">
+            <div class="search-input-wrap" style="flex: 1; min-width: 130px; max-width: 200px;"><span class="search-icon">🔍</span><input type="text" id="tableSearch" placeholder="Cari fasilitas..." style="width: 100%;"></div>
             <?php if(in_array($role,['admin','admin_fasilitas'])): ?>
             <button class="btn btn-success" onclick="openModal('modalTambahFasilitas')">➕ Tambah Fasilitas</button>
             <?php endif; ?>

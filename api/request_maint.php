@@ -22,10 +22,10 @@ if (!function_exists('fail')) {
 
 switch($action) {
     case 'list': 
-        $res = $conn->query("SELECT * FROM request_maint");
+        $res = $conn->query("SELECT * FROM request_maint ORDER BY id DESC");
         ok($res->fetch_all(MYSQLI_ASSOC));
     case 'my':
-        $stmt = $conn->prepare("SELECT * FROM request_maint WHERE pemohon=?");
+        $stmt = $conn->prepare("SELECT * FROM request_maint WHERE pemohon=? ORDER BY id DESC");
         $stmt->bind_param("s", $user['name']);
         $stmt->execute();
         ok($stmt->get_result()->fetch_all(MYSQLI_ASSOC));
@@ -78,6 +78,6 @@ switch($action) {
         }
         fail('Gagal update request');
     default: 
-        $res = $conn->query("SELECT * FROM request_maint");
+        $res = $conn->query("SELECT * FROM request_maint ORDER BY id DESC");
         ok($res->fetch_all(MYSQLI_ASSOC));
 }

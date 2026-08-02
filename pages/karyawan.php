@@ -61,8 +61,8 @@ if ($sub === 'data_karyawan'): ?>
 <div class="card">
     <div class="card-header">
         <div class="card-title">👥 Data Karyawan</div>
-        <div class="flex gap-2">
-            <div class="search-input-wrap" style="width:220px;"><span class="search-icon">🔍</span><input type="text" id="tableSearch" placeholder="Cari karyawan..."></div>
+        <div class="flex gap-2" style="flex-wrap: wrap;">
+            <div class="search-input-wrap" style="flex: 1; min-width: 130px; max-width: 220px;"><span class="search-icon">🔍</span><input type="text" id="tableSearch" placeholder="Cari karyawan..." style="width: 100%;"></div>
             <?php if(in_array($role,['admin','admin_hr'])): ?>
             <button class="btn btn-success" onclick="openModal('modalTambahKaryawan')">➕ Tambah Karyawan</button>
             <a href="print.php?type=karyawan" target="_blank" class="btn btn-outline">🖨️ Cetak</a>
@@ -293,9 +293,9 @@ elseif ($sub === 'rekap_absensi'): ?>
 // ═══ SUB: MONITORING AKTIVITAS ═══
 elseif ($sub === 'monitoring_aktivitas'): ?>
 <div class="card">
-    <div class="card-header">
+    <div class="card-header" style="flex-wrap: wrap; gap: 10px;">
         <div class="card-title">📝 Monitoring Aktivitas Karyawan</div>
-        <div class="search-input-wrap" style="width:220px;"><span class="search-icon">🔍</span><input type="text" id="tableSearch" placeholder="Cari aktivitas..."></div>
+        <div class="search-input-wrap" style="flex: 1; min-width: 130px; max-width: 220px;"><span class="search-icon">🔍</span><input type="text" id="tableSearch" placeholder="Cari aktivitas..." style="width: 100%;"></div>
     </div>
     <div class="table-wrap">
         <table>

@@ -7,7 +7,8 @@
 
 // Load data dari JSON
 $items    = $conn->query("SELECT * FROM inventory")->fetch_all(MYSQLI_ASSOC);
-$loans    = $conn->query("SELECT * FROM peminjaman")->fetch_all(MYSQLI_ASSOC);
+$loans    = $conn->query("SELECT * FROM peminjaman ORDER BY CAST(SUBSTRING(kode, 5) AS UNSIGNED) ASC")->fetch_all(MYSQLI_ASSOC);
+usort($loans, function($a, $b) { return (int)substr($a["kode"], 4) - (int)substr($b["kode"], 4); });
 $pending  = array_filter($loans, fn($l) => $l['status'] === 'pending');
 $dipinjam = array_filter($loans, fn($l) => $l['status'] === 'dipinjam');
 $tersedia = array_filter($items, fn($i) => $i['status'] === 'tersedia');
@@ -62,6 +63,10 @@ if (!$sub) {
     <a href="?mod=inventory&sub=approval"   class="tab-link <?= $sub==='approval'?'active':'' ?>">
         ✅ Persetujuan Peminjaman <?php if(count($pending)): ?><span class="tab-badge"><?= count($pending) ?></span><?php endif; ?>
     </a>
+<?php if ($role === 'admin'): ?>
+    <a href="?mod=inventory&sub=kembali"  class="tab-link <?= $sub==='kembali'?'active':'' ?>">📥 Kembalikan Barang</a>
+<?php endif; ?>
+    <a href="?mod=inventory&sub=riwayat"    class="tab-link <?= $sub==='riwayat'?'active':'' ?>">📋 Data Pengembalian</a>
     <a href="?mod=inventory&sub=laporan_inv" class="tab-link <?= $sub==='laporan_inv'?'active':'' ?>">📄 Laporan Inventaris</a>
 <?php elseif ($role==='manager'): ?>
     <a href="?mod=inventory&sub=approval"    class="tab-link <?= $sub==='approval'?'active':'' ?>">
@@ -70,7 +75,6 @@ if (!$sub) {
     <a href="?mod=inventory&sub=laporan_inv" class="tab-link <?= $sub==='laporan_inv'?'active':'' ?>">📄 Laporan Inventaris</a>
 <?php else: // staff ?>
     <a href="?mod=inventory&sub=pinjam"   class="tab-link <?= $sub==='pinjam'?'active':'' ?>">📤 Pinjam Barang</a>
-    <a href="?mod=inventory&sub=kembali"  class="tab-link <?= $sub==='kembali'?'active':'' ?>">📥 Kembalikan Barang</a>
     <a href="?mod=inventory&sub=riwayat"  class="tab-link <?= $sub==='riwayat'?'active':'' ?>">📋 Lihat Riwayat Peminjaman</a>
 <?php endif; ?>
 </div>
@@ -82,10 +86,10 @@ if ($sub === 'barang'): ?>
 <div class="card">
     <div class="card-header">
         <div class="card-title">📦 Data Inventaris Barang</div>
-        <div class="flex gap-2">
-            <div class="search-input-wrap" style="width:220px;">
+        <div class="flex gap-2" style="flex-wrap: wrap;">
+            <div class="search-input-wrap" style="flex: 1; min-width: 130px; max-width: 220px;">
                 <span class="search-icon">🔍</span>
-                <input type="text" id="tableSearch" placeholder="Cari barang...">
+                <input type="text" id="tableSearch" placeholder="Cari barang..." style="width: 100%;">
             </div>
             <button class="btn btn-success" onclick="openModal('modalTambahBarang')">➕ Tambah Barang</button>
             <a href="print.php?type=inventory" target="_blank" class="btn btn-outline">🖨️ Cetak</a>
@@ -375,8 +379,8 @@ async function ajukanPinjam(){
 </script>
 
 <?php
-// ═══ SUB: KEMBALIKAN BARANG (Staff) ═══
-elseif ($sub === 'kembali'): ?>
+// ═══ SUB: KEMBALIKAN BARANG (Admin Only) ═══
+elseif ($sub === 'kembali' && $role === 'admin'): ?>
 <div class="card">
     <div class="card-header"><div class="card-title">📥 Kembalikan Barang</div></div>
     <div class="table-wrap">
@@ -429,15 +433,19 @@ async function kembalikanBarang(id){
 // ═══ SUB: RIWAYAT (Staff) ═══
 elseif ($sub === 'riwayat'): ?>
 <div class="card">
-    <div class="card-header">
+    <div class="card-header" style="flex-wrap: wrap; gap: 10px;">
         <div class="card-title">📋 Riwayat Peminjaman</div>
-        <div class="search-input-wrap" style="width:220px;"><span class="search-icon">🔍</span><input type="text" id="tableSearch" placeholder="Cari..."></div>
+        <div class="search-input-wrap" style="flex: 1; min-width: 130px; max-width: 220px;">
+            <span class="search-icon">🔍</span>
+            <input type="text" id="tableSearch" placeholder="Cari..." style="width: 100%;">
+        </div>
     </div>
     <div class="table-wrap">
         <table>
             <thead><tr><th>Kode</th><th>Peminjam</th><th>Barang</th><th>Jml</th><th>Tgl Pinjam</th><th>Tgl Kembali</th><th>Status</th></tr></thead>
-            <tbody>
+            <tbody id="riwayatTbody">
             <?php foreach($loans as $l):
+                if (in_array($role, ['admin', 'admin_fasilitas']) && $l['status'] === 'ditolak') continue;
                 $sb = match($l['status']) {
                     'pending'       => '<span class="badge badge-warning">⏳ Pending</span>',
                     'dipinjam'      => '<span class="badge badge-info">🔄 Dipinjam</span>',
@@ -460,6 +468,8 @@ elseif ($sub === 'riwayat'): ?>
         </table>
     </div>
 </div>
+
+
 
 <?php
 // ═══ SUB: LAPORAN INVENTARIS ═══

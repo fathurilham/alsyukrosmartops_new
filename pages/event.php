@@ -126,8 +126,8 @@ elseif (in_array($sub,['kelola_event','daftar_event','monitoring_event'])): ?>
         <div class="card-title">
             <?= $sub==='monitoring_event'?'📡 Monitoring Event':($sub==='kelola_event'?'✏️ Kelola Event':'📋 Daftar Event') ?>
         </div>
-        <div class="flex gap-2">
-            <div class="search-input-wrap" style="width:200px;"><span class="search-icon">🔍</span><input type="text" id="tableSearch" placeholder="Cari event..."></div>
+        <div class="flex gap-2" style="flex-wrap: wrap;">
+            <div class="search-input-wrap" style="flex: 1; min-width: 130px; max-width: 200px;"><span class="search-icon">🔍</span><input type="text" id="tableSearch" placeholder="Cari event..." style="width: 100%;"></div>
             <a href="print.php?type=event" target="_blank" class="btn btn-outline btn-sm">🖨️ Cetak</a>
             <?php if($role==='eo'): ?><a href="?mod=event&sub=buat_event" class="btn btn-success btn-sm">➕ Buat Baru</a><?php endif; ?>
         </div>

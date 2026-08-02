@@ -8,6 +8,9 @@ require_once '../config/database.php';
 requireLogin();
 
 header('Content-Type: application/json');
+header("Cache-Control: no-store, no-cache, must-revalidate, max-age=0");
+header("Cache-Control: post-check=0, pre-check=0", false);
+header("Pragma: no-cache");
 $user = getCurrentUser();
 $role = $user['role'];
 
@@ -22,16 +25,16 @@ if (!function_exists('fail')) {
 
 switch($action){
     case 'list': 
-        $res = $conn->query("SELECT * FROM peminjaman");
-        ok($res->fetch_all(MYSQLI_ASSOC));
+        $res = $conn->query("SELECT * FROM peminjaman ORDER BY CAST(SUBSTRING(kode, 5) AS UNSIGNED) ASC");
+$data = $res->fetch_all(MYSQLI_ASSOC); usort($data, function($a, $b) { return (int)substr($a["kode"], 4) - (int)substr($b["kode"], 4); }); ok($data);
     case 'add':
         $barang = $_POST['barang']??'';
         $tgl_kembali = $_POST['tgl_kembali']??'';
         if(!$barang || !$tgl_kembali) fail('Data tidak lengkap');
 
-        $res = $conn->query("SELECT MAX(id) as max_id FROM peminjaman");
+        $res = $conn->query("SELECT MAX(CAST(SUBSTRING(kode, 5) AS UNSIGNED)) as max_num FROM peminjaman");
         $row = $res->fetch_assoc();
-        $nextId = ($row['max_id'] ?? 0) + 1;
+        $nextId = ($row['max_num'] ?? 0) + 1;
         $kode = 'PJM-'.str_pad($nextId,3,'0',STR_PAD_LEFT);
         $peminjam = $user['name'];
         $unit = $user['unit']??'';
@@ -68,6 +71,16 @@ switch($action){
         $stmt = $conn->prepare("UPDATE peminjaman SET status=?, approved_by=?, tgl_dikembalikan=? WHERE id=?");
         $stmt->bind_param("sssi", $newStatus, $approved_by, $tgl_dikembalikan, $id);
         if ($stmt->execute()) {
+            $oldStatus = $it['status'];
+            if ($newStatus === 'dipinjam' && $oldStatus !== 'dipinjam') {
+                $stmtStock = $conn->prepare("UPDATE inventory SET stok = GREATEST(0, stok - ?) WHERE nama = ?");
+                $stmtStock->bind_param("is", $it['jumlah'], $it['barang']);
+                $stmtStock->execute();
+            } else if ($newStatus === 'dikembalikan' && $oldStatus === 'dipinjam') {
+                $stmtStock = $conn->prepare("UPDATE inventory SET stok = stok + ? WHERE nama = ?");
+                $stmtStock->bind_param("is", $it['jumlah'], $it['barang']);
+                $stmtStock->execute();
+            }
             $stmt = $conn->prepare("SELECT * FROM peminjaman WHERE id=?");
             $stmt->bind_param("i", $id);
             $stmt->execute();
@@ -88,9 +101,20 @@ switch($action){
         fail('Tidak ditemukan');
     case 'return':
         $id=(int)($_POST['id']??0);
+        $stmt = $conn->prepare("SELECT * FROM peminjaman WHERE id=?");
+        $stmt->bind_param("i", $id);
+        $stmt->execute();
+        $it = $stmt->get_result()->fetch_assoc();
+        if (!$it || $it['status'] === 'dikembalikan') fail('Tidak valid');
+
         $stmt = $conn->prepare("UPDATE peminjaman SET status='dikembalikan', tgl_dikembalikan=CURRENT_DATE WHERE id=?");
         $stmt->bind_param("i", $id);
         if ($stmt->execute()) {
+            if ($it['status'] === 'dipinjam') {
+                $stmtStock = $conn->prepare("UPDATE inventory SET stok = stok + ? WHERE nama = ?");
+                $stmtStock->bind_param("is", $it['jumlah'], $it['barang']);
+                $stmtStock->execute();
+            }
             $stmt = $conn->prepare("SELECT * FROM peminjaman WHERE id=?");
             $stmt->bind_param("i", $id);
             $stmt->execute();
@@ -98,6 +122,6 @@ switch($action){
         }
         fail('Tidak ditemukan');
     default: 
-        $res = $conn->query("SELECT * FROM peminjaman");
-        ok($res->fetch_all(MYSQLI_ASSOC));
+        $res = $conn->query("SELECT * FROM peminjaman ORDER BY CAST(SUBSTRING(kode, 5) AS UNSIGNED) ASC");
+$data = $res->fetch_all(MYSQLI_ASSOC); usort($data, function($a, $b) { return (int)substr($a["kode"], 4) - (int)substr($b["kode"], 4); }); ok($data);
 }

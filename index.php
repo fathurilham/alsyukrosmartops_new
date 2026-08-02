@@ -36,6 +36,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <link rel="icon" type="image/png" href="logo.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/lucide@latest"></script>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root {
@@ -127,7 +128,7 @@ html, body {
   font-weight: 500;
 }
 .feat-list li:last-child { border-bottom: none; }
-.feat-list li span { font-size: 18px; }
+.feat-list li svg { width: 22px; height: 22px; stroke-width: 2; flex-shrink: 0; }
 
 /* RIGHT SIDE */
 .rgt {
@@ -171,6 +172,7 @@ html, body {
   gap: 10px;
   margin-bottom: 24px;
 }
+.falert svg { width: 20px; height: 20px; flex-shrink: 0; }
 .ferr { background: #fee2e2; color: #b91c1c; border: 1px solid #fecaca; }
 .fok { background: #d1fae5; color: #047857; border: 1px solid #a7f3d0; }
 
@@ -211,10 +213,13 @@ html, body {
   background: none;
   border: none;
   cursor: pointer;
-  font-size: 16px;
   color: var(--text-muted);
   padding: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
+.feye svg { width: 20px; height: 20px; stroke-width: 2; }
 .btn-submit {
   width: 100%;
   padding: 14px;
@@ -287,12 +292,15 @@ html, body {
   box-shadow: 0 2px 8px rgba(0,0,0,0.05);
 }
 .dpill strong {
-  display: block;
+  display: flex;
+  align-items: center;
+  gap: 6px;
   font-size: 13px;
   color: var(--text-main);
   font-weight: 600;
   margin-bottom: 2px;
 }
+.dpill strong svg { width: 16px; height: 16px; }
 .dpill span {
   font-size: 12px;
   color: var(--text-muted);
@@ -314,8 +322,10 @@ html, body {
 }
 
 @media(max-width: 900px) {
-  .lft { display: none; }
-  .rgt { padding: 24px; }
+  .wrap { flex-direction: column; }
+  .lft { width: 100%; padding: 40px 24px; display: flex; align-items: center; justify-content: center; text-align: center; }
+  .logo-box { margin-bottom: 24px; }
+  .rgt { width: 100%; padding: 24px; }
   .login-card { padding: 32px 24px; }
 }
 </style>
@@ -334,11 +344,11 @@ html, body {
       <h1 class="headline">Sistem Operasional Terpadu</h1>
       <p class="sub-txt">Kelola seluruh kegiatan akademik dan operasional dalam satu platform yang terintegrasi, aman, dan efisien.</p>
       <ul class="feat-list">
-        <li><span>📦</span> Inventaris &amp; Peminjaman</li>
-        <li><span>👥</span> SDM &amp; Absensi</li>
-        <li><span>🎪</span> Event Management</li>
-        <li><span>🔧</span> Maintenance Fasilitas</li>
-        <li><span>📁</span> Arsip Digital</li>
+        <li><i data-lucide="package"></i> Inventaris &amp; Peminjaman</li>
+        <li><i data-lucide="users"></i> SDM &amp; Absensi</li>
+        <li><i data-lucide="calendar-days"></i> Event Management</li>
+        <li><i data-lucide="wrench"></i> Maintenance Fasilitas</li>
+        <li><i data-lucide="folder"></i> Arsip Digital</li>
       </ul>
     </div>
   </div>
@@ -350,8 +360,8 @@ html, body {
         <p>Silakan masukkan kredensial Anda untuk melanjutkan.</p>
       </div>
 
-      <?php if($error): ?><div class="falert ferr">⚠️ <?=htmlspecialchars($error)?></div><?php endif; ?>
-      <?php if(isset($_GET['registered'])): ?><div class="falert fok">✅ Registrasi berhasil! Silakan login.</div><?php endif; ?>
+      <?php if($error): ?><div class="falert ferr"><i data-lucide="alert-triangle"></i> <span><?=htmlspecialchars($error)?></span></div><?php endif; ?>
+      <?php if(isset($_GET['registered'])): ?><div class="falert fok"><i data-lucide="check-circle"></i> <span>Registrasi berhasil! Silakan login.</span></div><?php endif; ?>
 
       <form method="POST">
         <div class="fgrp">
@@ -365,7 +375,7 @@ html, body {
           <label class="flabel">Password</label>
           <div class="finwrap">
             <input class="finput" type="password" name="password" id="pw" placeholder="Masukkan password..." required>
-            <button type="button" class="feye" id="eyeBtn">👁️</button>
+            <button type="button" class="feye" id="eyeBtn"><i data-lucide="eye"></i></button>
           </div>
         </div>
         <button type="submit" class="btn-submit">Masuk</button>
@@ -376,14 +386,14 @@ html, body {
       <div class="dbox">
         <h4>Pilih Peran Demo</h4>
         <div class="dgrid">
-          <button class="dpill" data-u="admin"      data-p="admin123"><strong>👑 Administrator</strong><span>admin</span></button>
-          <button class="dpill" data-u="adminhr"    data-p="hr123456"><strong>🧑‍💼 Admin HR</strong><span>adminhr</span></button>
-          <button class="dpill" data-u="eo"         data-p="eo123456"><strong>🎪 EO</strong><span>eo</span></button>
-          <button class="dpill" data-u="adminfas"   data-p="fas12345"><strong>🏗️ Fasilitas</strong><span>adminfas</span></button>
-          <button class="dpill" data-u="teknisi"    data-p="teks1234"><strong>🔧 Teknisi</strong><span>teknisi</span></button>
-          <button class="dpill" data-u="manager"    data-p="mgr12345"><strong>🎓 Manager</strong><span>manager</span></button>
-          <button class="dpill" data-u="adminarsip" data-p="arsip123"><strong>📁 Arsip</strong><span>adminarsip</span></button>
-          <button class="dpill" data-u="staff1"     data-p="staff123"><strong>🧑 Staff</strong><span>staff1</span></button>
+          <button class="dpill" data-u="admin"      data-p="admin123"><strong><i data-lucide="crown"></i> Administrator</strong><span>admin</span></button>
+          <button class="dpill" data-u="adminhr"    data-p="hr123456"><strong><i data-lucide="briefcase"></i> Admin HR</strong><span>adminhr</span></button>
+          <button class="dpill" data-u="eo"         data-p="eo123456"><strong><i data-lucide="tent"></i> EO</strong><span>eo</span></button>
+          <button class="dpill" data-u="adminfas"   data-p="fas12345"><strong><i data-lucide="building"></i> Fasilitas</strong><span>adminfas</span></button>
+          <button class="dpill" data-u="teknisi"    data-p="teks1234"><strong><i data-lucide="wrench"></i> Teknisi</strong><span>teknisi</span></button>
+          <button class="dpill" data-u="manager"    data-p="mgr12345"><strong><i data-lucide="graduation-cap"></i> Manager</strong><span>manager</span></button>
+          <button class="dpill" data-u="adminarsip" data-p="arsip123"><strong><i data-lucide="folder"></i> Arsip</strong><span>adminarsip</span></button>
+          <button class="dpill" data-u="staff1"     data-p="staff123"><strong><i data-lucide="user"></i> Staff</strong><span>staff1</span></button>
         </div>
       </div>
       <p class="reglink">Belum punya akun? <a href="register.php">Daftar Sekarang</a></p>
@@ -391,11 +401,17 @@ html, body {
   </div>
 </div>
 <script>
+lucide.createIcons();
 document.querySelectorAll('.dpill').forEach(b=>{
   b.addEventListener('click',()=>{document.getElementById('username').value=b.dataset.u;document.getElementById('pw').value=b.dataset.p});
 });
 const pw=document.getElementById('pw'),eye=document.getElementById('eyeBtn');
-eye.addEventListener('click',()=>{pw.type=pw.type==='password'?'text':'password';eye.textContent=pw.type==='password'?'👁️':'🙈'});
+eye.addEventListener('click',()=>{
+  const type = pw.type === 'password' ? 'text' : 'password';
+  pw.type = type;
+  eye.innerHTML = type === 'password' ? '<i data-lucide="eye"></i>' : '<i data-lucide="eye-off"></i>';
+  lucide.createIcons({ root: eye });
+});
 </script>
 </body>
 </html>

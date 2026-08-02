@@ -118,7 +118,7 @@ function getRoleSubMenus($role) {
         //        Staff=Pinjam Barang, Kembalikan Barang
         // Hal.1 Use Case: juga Pencatatan & Pengembalian
         'inventory' => match($role) {
-            'admin'           => ['barang'=>'Kelola Data Barang','approval'=>'Persetujuan Peminjaman','laporan_inv'=>'Lihat Laporan'],
+            'admin'           => ['barang'=>'Kelola Data Barang','approval'=>'Persetujuan Peminjaman','riwayat'=>'Data Pengembalian','laporan_inv'=>'Lihat Laporan'],
             'manager'         => ['approval'=>'Approval Peminjaman','laporan_inv'=>'Laporan Inventaris'],
             'admin_fasilitas' => ['barang'=>'Data Barang','riwayat'=>'Riwayat Peminjaman'],
             'staff'           => ['pinjam'=>'Pinjam Barang','kembali'=>'Kembalikan Barang','riwayat'=>'Riwayat Peminjaman'],

@@ -68,7 +68,7 @@ function getRoleColor($role) {
  * Berdasarkan Use Case Diagram (hal.1) + Flowchart per modul (hal.2-8).
  *
  * Diagram hal.8  → Inventory : Admin=kelola+approval, Staff=pinjam+kembalikan
- * Diagram hal.4  → HR/Karyawan: AdminHR=kelola+rekap, Karyawan=profil+absensi+aktivitas
+ * Diagram hal.4  → HR/Karyawan: AdminHR=kelola, Karyawan=profil+aktivitas
  * Diagram hal.7  → Event: EO=buat+kelola, Admin=approval+monitor, Staff=lihat+reminder
  * Diagram hal.3  → Maintenance: AdminFas=kelola+jadwal, Teknisi=tugas+status, Staff/Karyawan=request
  * Diagram hal.2  → Arsip: AdminArsip=kelola+backup, Manager=dashboard+lihat, Staff=cari+upload
@@ -81,11 +81,11 @@ function getRoleModules($role) {
         // Staff – inventory (pinjam/kembali), aktivitas harian, event (lihat), maintenance (request), arsip (cari/upload)
         'staff' => ['inventory', 'aktivitas', 'event', 'maintenance', 'arsip'],
 
-        // Karyawan – absensi harian, aktivitas, profil, request maintenance, upload dokumen
-        'karyawan' => ['absensi', 'aktivitas', 'maintenance'],
+        // Karyawan – aktivitas, profil, request maintenance, upload dokumen
+        'karyawan' => ['aktivitas', 'maintenance'],
 
-        // Admin HR – kelola data karyawan, rekap absensi, monitoring aktivitas & kinerja
-        'admin_hr' => ['karyawan', 'absensi', 'laporan'],
+        // Admin HR – kelola data karyawan, monitoring aktivitas & kinerja
+        'admin_hr' => ['karyawan', 'laporan'],
 
         // Event Organizer – buat/kelola event, assign personel & fasilitas, laporan event
         'eo' => ['event', 'laporan'],
@@ -126,20 +126,12 @@ function getRoleSubMenus($role) {
         },
 
         // ───── MODUL KARYAWAN & HR ─────
-        // Hal.4: AdminHR=Kelola Karyawan, Rekap Absensi, Monitoring Aktivitas, Monitoring Kinerja
-        //        Karyawan=Lihat/Edit Profil, Absensi Harian, Aktivitas Harian, Lihat Notifikasi
+        // Hal.4: AdminHR=Kelola Karyawan, Monitoring Aktivitas, Monitoring Kinerja
+        //        Karyawan=Lihat/Edit Profil, Aktivitas Harian, Lihat Notifikasi
         'karyawan' => match($role) {
-            'admin','admin_hr' => ['data_karyawan'=>'Kelola Data Karyawan','rekap_absensi'=>'Rekap Absensi','monitoring_aktivitas'=>'Monitoring Aktivitas','monitoring_kinerja'=>'Monitoring Kinerja'],
+            'admin','admin_hr' => ['data_karyawan'=>'Kelola Data Karyawan','monitoring_aktivitas'=>'Monitoring Aktivitas','monitoring_kinerja'=>'Monitoring Kinerja'],
             'manager'          => ['data_karyawan'=>'Data Karyawan','monitoring_kinerja'=>'Monitoring Kinerja'],
             default            => ['profil'=>'Lihat/Edit Profil'],
-        },
-
-        // ───── MODUL ABSENSI ─────
-        // Hal.4: Karyawan=Absensi Harian | AdminHR=Rekap Absensi, Cek Absensi
-        'absensi' => match($role) {
-            'admin','admin_hr' => ['rekap_absensi'=>'Rekap Absensi','cek_absensi'=>'Cek Absensi'],
-            'karyawan'         => ['absensi_harian'=>'Absensi Harian'],
-            default            => ['absensi_harian'=>'Absensi Harian'],
         },
 
         // ───── MODUL AKTIVITAS ─────

@@ -186,8 +186,8 @@ html,body{min-height:100%;font-family:'DM Sans',sans-serif;background:var(--off)
             <?php
             $roles=[
               ['staff','🧑','Staff','Pinjam, aktivitas, arsip'],
-              ['karyawan','👔','Karyawan','Absensi, profil, dokumen'],
-              ['admin_hr','🧑‍💼','Admin HR','Kelola SDM & absensi'],
+              ['karyawan','👔','Karyawan','Aktivitas, profil, dokumen'],
+              ['admin_hr','🧑‍💼','Admin HR','Kelola SDM & aktivitas'],
               ['eo','🎪','Event Organizer','Kelola event & laporan'],
               ['admin_fasilitas','🏗️','Admin Fasilitas','Fasilitas & maintenance'],
               ['teknisi','🔧','Teknisi','Tugas & update status'],

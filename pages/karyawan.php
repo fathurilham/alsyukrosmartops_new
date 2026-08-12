@@ -6,12 +6,8 @@
  */
 
 $karyawans  = $conn->query("SELECT * FROM karyawan")->fetch_all(MYSQLI_ASSOC);
-$absenToday = $conn->query("SELECT * FROM absensi")->fetch_all(MYSQLI_ASSOC);
 $aktivitas  = $conn->query("SELECT * FROM aktivitas")->fetch_all(MYSQLI_ASSOC);
 
-$hadir  = count(array_filter($absenToday, fn($a)=>$a['status']==='hadir'));
-$izin   = count(array_filter($absenToday, fn($a)=>in_array($a['status'],['izin','sakit'])));
-$cuti   = count(array_filter($absenToday, fn($a)=>$a['status']==='cuti'));
 $aktif  = count(array_filter($karyawans,  fn($k)=>$k['status']==='aktif'));
 
 $sub = $_GET['sub'] ?? '';
@@ -25,18 +21,9 @@ if (!$sub) {
 ?>
 
 <!-- STATS -->
-<div class="stats-grid">
+<div class="stats-grid" style="grid-template-columns: 1fr; max-width: 300px; margin-bottom: 24px;">
     <div class="stat-card c-blue"><div class="stat-icon c-blue">👥</div>
         <div class="stat-info"><h3><?= count($karyawans) ?></h3><p>Total Karyawan</p><div class="stat-change up">▲ <?= $aktif ?> aktif</div></div>
-    </div>
-    <div class="stat-card c-green"><div class="stat-icon c-green">✅</div>
-        <div class="stat-info"><h3><?= $hadir ?></h3><p>Hadir Hari Ini</p></div>
-    </div>
-    <div class="stat-card c-orange"><div class="stat-icon c-orange">🤒</div>
-        <div class="stat-info"><h3><?= $izin ?></h3><p>Izin / Sakit</p></div>
-    </div>
-    <div class="stat-card c-teal"><div class="stat-icon c-teal">🌴</div>
-        <div class="stat-info"><h3><?= $cuti ?></h3><p>Cuti</p></div>
     </div>
 </div>
 
@@ -44,7 +31,6 @@ if (!$sub) {
 <div class="tab-nav-bar">
 <?php if (in_array($role,['admin','admin_hr'])): ?>
     <a href="?mod=karyawan&sub=data_karyawan"        class="tab-link <?= $sub==='data_karyawan'?'active':'' ?>">👥 Kelola Data Karyawan</a>
-    <a href="?mod=karyawan&sub=rekap_absensi"        class="tab-link <?= $sub==='rekap_absensi'?'active':'' ?>">📋 Rekap Absensi</a>
     <a href="?mod=karyawan&sub=monitoring_aktivitas" class="tab-link <?= $sub==='monitoring_aktivitas'?'active':'' ?>">📝 Monitoring Aktivitas</a>
     <a href="?mod=karyawan&sub=monitoring_kinerja"   class="tab-link <?= $sub==='monitoring_kinerja'?'active':'' ?>">📊 Monitoring Kinerja</a>
 <?php elseif($role==='manager'): ?>
@@ -241,53 +227,6 @@ async function simpanKaryawan(){
     else toast(res.msg||'Gagal','error');
 }
 </script>
-
-<?php
-// ═══ SUB: REKAP ABSENSI ═══
-elseif ($sub === 'rekap_absensi'): ?>
-<div class="card">
-    <div class="card-header">
-        <div class="card-title">📋 Rekap Absensi — <?= date('d F Y') ?></div>
-        <a href="print.php?type=absensi" target="_blank" class="btn btn-outline btn-sm">🖨️ Cetak</a>
-    </div>
-
-    <!-- Ring chart mini -->
-    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:0;border-bottom:1px solid #e8f0eb;">
-        <?php
-        $stats=[['Hadir',$hadir,'#27ae60'],['Izin/Sakit',$izin,'#f39c12'],['Cuti',$cuti,'#3498db'],['Absen',count($absenToday)-$hadir-$izin-$cuti,'#e74c3c']];
-        foreach($stats as $s): ?>
-        <div style="text-align:center;padding:20px;border-right:1px solid #e8f0eb;">
-            <div style="font-size:32px;font-weight:800;color:<?= $s[2] ?>;"><?= $s[1] ?></div>
-            <div style="font-size:13px;color:#6b8070;margin-top:4px;"><?= $s[0] ?></div>
-        </div>
-        <?php endforeach; ?>
-    </div>
-
-    <div class="table-wrap">
-        <table>
-            <thead><tr><th>Nama Karyawan</th><th>Unit</th><th>Jam Masuk</th><th>Jam Keluar</th><th>Status</th><th>Keterangan</th></tr></thead>
-            <tbody>
-            <?php foreach($absenToday as $a):
-                $sb = match($a['status']) {
-                    'hadir' => '<span class="badge badge-success">✅ Hadir</span>',
-                    'izin'  => '<span class="badge badge-warning">🤒 Izin/Sakit</span>',
-                    'cuti'  => '<span class="badge badge-info">🌴 Cuti</span>',
-                    default => '<span class="badge badge-danger">❌ Absen</span>',
-                };
-            ?>
-            <tr>
-                <td><strong><?= htmlspecialchars($a['nama']) ?></strong></td>
-                <td><span class="badge badge-secondary"><?= $a['unit'] ?></span></td>
-                <td><?= $a['masuk'] ?: '<span class="text-muted">—</span>' ?></td>
-                <td><?= $a['keluar'] ?: '<span class="text-muted">—</span>' ?></td>
-                <td><?= $sb ?></td>
-                <td><span class="text-sm text-muted"><?= $a['keterangan'] ?: '—' ?></span></td>
-            </tr>
-            <?php endforeach; ?>
-            </tbody>
-        </table>
-    </div>
-</div>
 
 <?php
 // ═══ SUB: MONITORING AKTIVITAS ═══

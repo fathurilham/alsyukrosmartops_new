@@ -17,7 +17,7 @@ $dayNames  = ['Sunday'=>'Minggu','Monday'=>'Senin','Tuesday'=>'Selasa','Wednesda
 $dayName   = $dayNames[date('l')];
 
 // ACCESS CONTROL
-$accessMap = ['inventory'=>'inventory','karyawan'=>'karyawan','absensi'=>'absensi',
+$accessMap = ['inventory'=>'inventory','karyawan'=>'karyawan',
     'aktivitas'=>'aktivitas','event'=>'event','maintenance'=>'maintenance',
     'arsip'=>'arsip','laporan'=>'laporan','notifikasi'=>'*','users'=>'admin_only','profile'=>'*'];
 if ($mod && !in_array($mod,['','profile','notifikasi'])) {
@@ -27,14 +27,14 @@ if ($mod && !in_array($mod,['','profile','notifikasi'])) {
 }
 
 $modTitles=[''=>'Dashboard','inventory'=>'Inventaris & Peminjaman','karyawan'=>'Manajemen Karyawan',
-    'absensi'=>'Absensi','aktivitas'=>'Aktivitas Harian','event'=>'Event Management',
+    'aktivitas'=>'Aktivitas Harian','event'=>'Event Management',
     'maintenance'=>'Maintenance Fasilitas','arsip'=>'Arsip Digital','laporan'=>'Laporan & Analitik',
     'notifikasi'=>'Notifikasi','users'=>'Kelola Pengguna','profile'=>'Profil Saya'];
 $subTitles=['barang'=>'Kelola Data Barang','approval'=>'Persetujuan Peminjaman','laporan_inv'=>'Laporan Inventaris',
     'pinjam'=>'Pinjam Barang','kembali'=>'Kembalikan Barang','riwayat'=>'Riwayat Peminjaman',
-    'data_karyawan'=>'Kelola Data Karyawan','rekap_absensi'=>'Rekap Absensi',
+    'data_karyawan'=>'Kelola Data Karyawan',
     'monitoring_aktivitas'=>'Monitoring Aktivitas','monitoring_kinerja'=>'Monitoring Kinerja',
-    'profil'=>'Lihat/Edit Profil','absensi_harian'=>'Absensi Harian','cek_absensi'=>'Cek Absensi',
+    'profil'=>'Lihat/Edit Profil',
     'input_aktivitas'=>'Input Aktivitas Harian','riwayat_aktivitas'=>'Riwayat Aktivitas',
     'buat_event'=>'Buat Event','kelola_event'=>'Kelola/Edit Event','assign'=>'Assign Personel & Fasilitas',
     'update_status'=>'Update Status Event','laporan_event'=>'Laporan Event',
@@ -233,7 +233,7 @@ function tabBtn($k,$cur,$lbl,$url){$c=$cur===$k?'active':'';return "<a href='$ur
 <main class="page-content">
 <?php
 if($mod){
-    $ml=['inventory'=>'Inventaris','karyawan'=>'Karyawan','absensi'=>'Absensi','aktivitas'=>'Aktivitas','event'=>'Event','maintenance'=>'Maintenance','arsip'=>'Arsip Digital','laporan'=>'Laporan','notifikasi'=>'Notifikasi','users'=>'Pengguna','profile'=>'Profil'];
+    $ml=['inventory'=>'Inventaris','karyawan'=>'Karyawan','aktivitas'=>'Aktivitas','event'=>'Event','maintenance'=>'Maintenance','arsip'=>'Arsip Digital','laporan'=>'Laporan','notifikasi'=>'Notifikasi','users'=>'Pengguna','profile'=>'Profil'];
     echo '<div class="breadcrumb"><a href="dashboard.php"><i data-lucide="home" style="width:14px;height:14px;display:inline-block;vertical-align:-2px;"></i> Dashboard</a><span style="opacity:.5;margin:0 2px;">&#8250;</span><span class="cur">'.htmlspecialchars($ml[$mod]??$mod).'</span>';
     if($sub && isset($subTitles[$sub])) echo '<span style="opacity:.5;margin:0 2px;">&#8250;</span><span style="color:var(--primary);">'.htmlspecialchars($subTitles[$sub]).'</span>';
     echo '</div>';
@@ -242,8 +242,8 @@ switch($mod):
 
 // DASHBOARD HOME
 case '':
-    $rdesc=['admin'=>'Akses penuh seluruh modul sistem','staff'=>'Pinjam barang · Aktivitas · Request · Arsip','karyawan'=>'Absensi · Aktivitas · Request maintenance','admin_hr'=>'Kelola karyawan · Absensi · Monitoring kinerja','eo'=>'Buat & kelola event · Assign personel','admin_fasilitas'=>'Kelola fasilitas · Jadwal maintenance','teknisi'=>'Lihat & proses tugas maintenance','manager'=>'Dashboard analitik · Approval · Evaluasi · Laporan','admin_arsip'=>'Kelola arsip · Klasifikasi · Backup & restore'];
-    $qas=['admin'=>[['package','dashboard.php?mod=inventory&sub=barang','Kelola Barang'],['check-circle','dashboard.php?mod=inventory&sub=approval','Approval Pinjam'],['users','dashboard.php?mod=karyawan&sub=data_karyawan','Data Karyawan'],['tent','dashboard.php?mod=event&sub=approval_event','Approval Event'],['hammer','dashboard.php?mod=maintenance&sub=kelola_fasilitas','Fasilitas'],['folder','dashboard.php?mod=arsip&sub=kelola_arsip','Kelola Arsip'],['trending-up','dashboard.php?mod=laporan&sub=dashboard_analitik','Analitik'],['key','dashboard.php?mod=users','Pengguna']],'staff'=>[['upload-cloud','dashboard.php?mod=inventory&sub=pinjam','Pinjam Barang'],['pencil','dashboard.php?mod=aktivitas&sub=input_aktivitas','Input Aktivitas'],['ticket','dashboard.php?mod=event&sub=event_saya','Event Saya'],['tool','dashboard.php?mod=maintenance&sub=request_maint','Request Maint'],['search','dashboard.php?mod=arsip&sub=cari_arsip','Cari Arsip']],'karyawan'=>[['clipboard-list','dashboard.php?mod=absensi&sub=absensi_harian','Absensi'],['pencil','dashboard.php?mod=aktivitas&sub=input_aktivitas','Input Aktivitas'],['user','dashboard.php?mod=karyawan&sub=profil','Profil Saya'],['tool','dashboard.php?mod=maintenance&sub=request_maint','Request Maint'],['upload','dashboard.php?mod=arsip&sub=upload_dok','Upload Dokumen'],['bell','dashboard.php?mod=notifikasi','Notifikasi']],'admin_hr'=>[['users','dashboard.php?mod=karyawan&sub=data_karyawan','Data Karyawan'],['clipboard-list','dashboard.php?mod=absensi&sub=rekap_absensi','Rekap Absensi'],['search','dashboard.php?mod=absensi&sub=cek_absensi','Cek Absensi'],['file-signature','dashboard.php?mod=karyawan&sub=monitoring_aktivitas','Monitor Aktivitas'],['bar-chart-2','dashboard.php?mod=karyawan&sub=monitoring_kinerja','Monitor Kinerja'],['file-text','dashboard.php?mod=laporan&sub=laporan_sdm','Laporan SDM']],'eo'=>[['plus-circle','dashboard.php?mod=event&sub=buat_event','Buat Event'],['pencil','dashboard.php?mod=event&sub=kelola_event','Kelola Event'],['users','dashboard.php?mod=event&sub=assign','Assign Personel'],['refresh-cw','dashboard.php?mod=event&sub=update_status','Update Status'],['bar-chart-2','dashboard.php?mod=laporan&sub=laporan_event','Laporan Event']],'admin_fasilitas'=>[['hammer','dashboard.php?mod=maintenance&sub=kelola_fasilitas','Kelola Fasilitas'],['calendar','dashboard.php?mod=maintenance&sub=jadwal_maint','Jadwal Maint'],['bar-chart-2','dashboard.php?mod=laporan&sub=laporan_maint','Laporan']],'teknisi'=>[['file-text','dashboard.php?mod=maintenance&sub=tugas_maint','Lihat Tugas'],['calendar','dashboard.php?mod=maintenance&sub=jadwal_maint','Jadwal'],['wrench','dashboard.php?mod=maintenance&sub=proses_maint','Update Status']],'manager'=>[['trending-up','dashboard.php?mod=laporan&sub=dashboard_analitik','Dashboard'],['file-text','dashboard.php?mod=laporan&sub=generate_laporan','Generate Laporan'],['check-circle','dashboard.php?mod=inventory&sub=approval','Approval Pinjam'],['award','dashboard.php?mod=event&sub=evaluasi_event','Evaluasi Event'],['tent','dashboard.php?mod=event&sub=daftar_event','Daftar Event'],['folder-open','dashboard.php?mod=arsip&sub=lihat_arsip','Lihat Arsip']],'admin_arsip'=>[['folder','dashboard.php?mod=arsip&sub=kelola_arsip','Kelola Arsip'],['tag','dashboard.php?mod=arsip&sub=klasifikasi','Klasifikasi'],['search','dashboard.php?mod=arsip&sub=pencarian_arsip','Pencarian'],['save','dashboard.php?mod=arsip&sub=backup_restore','Backup & Restore'],['bar-chart-2','dashboard.php?mod=laporan&sub=laporan_arsip','Laporan Arsip']]];
+    $rdesc=['admin'=>'Akses penuh seluruh modul sistem','staff'=>'Pinjam barang · Aktivitas · Request · Arsip','karyawan'=>'Aktivitas · Request maintenance','admin_hr'=>'Kelola karyawan · Monitoring kinerja','eo'=>'Buat & kelola event · Assign personel','admin_fasilitas'=>'Kelola fasilitas · Jadwal maintenance','teknisi'=>'Lihat & proses tugas maintenance','manager'=>'Dashboard analitik · Approval · Evaluasi · Laporan','admin_arsip'=>'Kelola arsip · Klasifikasi · Backup & restore'];
+    $qas=['admin'=>[['package','dashboard.php?mod=inventory&sub=barang','Kelola Barang'],['check-circle','dashboard.php?mod=inventory&sub=approval','Approval Pinjam'],['users','dashboard.php?mod=karyawan&sub=data_karyawan','Data Karyawan'],['tent','dashboard.php?mod=event&sub=approval_event','Approval Event'],['hammer','dashboard.php?mod=maintenance&sub=kelola_fasilitas','Fasilitas'],['folder','dashboard.php?mod=arsip&sub=kelola_arsip','Kelola Arsip'],['trending-up','dashboard.php?mod=laporan&sub=dashboard_analitik','Analitik'],['key','dashboard.php?mod=users','Pengguna']],'staff'=>[['upload-cloud','dashboard.php?mod=inventory&sub=pinjam','Pinjam Barang'],['pencil','dashboard.php?mod=aktivitas&sub=input_aktivitas','Input Aktivitas'],['ticket','dashboard.php?mod=event&sub=event_saya','Event Saya'],['tool','dashboard.php?mod=maintenance&sub=request_maint','Request Maint'],['search','dashboard.php?mod=arsip&sub=cari_arsip','Cari Arsip']],'karyawan'=>[['pencil','dashboard.php?mod=aktivitas&sub=input_aktivitas','Input Aktivitas'],['user','dashboard.php?mod=karyawan&sub=profil','Profil Saya'],['tool','dashboard.php?mod=maintenance&sub=request_maint','Request Maint'],['upload','dashboard.php?mod=arsip&sub=upload_dok','Upload Dokumen'],['bell','dashboard.php?mod=notifikasi','Notifikasi']],'admin_hr'=>[['users','dashboard.php?mod=karyawan&sub=data_karyawan','Data Karyawan'],['file-signature','dashboard.php?mod=karyawan&sub=monitoring_aktivitas','Monitor Aktivitas'],['bar-chart-2','dashboard.php?mod=karyawan&sub=monitoring_kinerja','Monitor Kinerja'],['file-text','dashboard.php?mod=laporan&sub=laporan_sdm','Laporan SDM']],'eo'=>[['plus-circle','dashboard.php?mod=event&sub=buat_event','Buat Event'],['pencil','dashboard.php?mod=event&sub=kelola_event','Kelola Event'],['users','dashboard.php?mod=event&sub=assign','Assign Personel'],['refresh-cw','dashboard.php?mod=event&sub=update_status','Update Status'],['bar-chart-2','dashboard.php?mod=laporan&sub=laporan_event','Laporan Event']],'admin_fasilitas'=>[['hammer','dashboard.php?mod=maintenance&sub=kelola_fasilitas','Kelola Fasilitas'],['calendar','dashboard.php?mod=maintenance&sub=jadwal_maint','Jadwal Maint'],['bar-chart-2','dashboard.php?mod=laporan&sub=laporan_maint','Laporan']],'teknisi'=>[['file-text','dashboard.php?mod=maintenance&sub=tugas_maint','Lihat Tugas'],['calendar','dashboard.php?mod=maintenance&sub=jadwal_maint','Jadwal'],['wrench','dashboard.php?mod=maintenance&sub=proses_maint','Update Status']],'manager'=>[['trending-up','dashboard.php?mod=laporan&sub=dashboard_analitik','Dashboard'],['file-text','dashboard.php?mod=laporan&sub=generate_laporan','Generate Laporan'],['check-circle','dashboard.php?mod=inventory&sub=approval','Approval Pinjam'],['award','dashboard.php?mod=event&sub=evaluasi_event','Evaluasi Event'],['tent','dashboard.php?mod=event&sub=daftar_event','Daftar Event'],['folder-open','dashboard.php?mod=arsip&sub=lihat_arsip','Lihat Arsip']],'admin_arsip'=>[['folder','dashboard.php?mod=arsip&sub=kelola_arsip','Kelola Arsip'],['tag','dashboard.php?mod=arsip&sub=klasifikasi','Klasifikasi'],['search','dashboard.php?mod=arsip&sub=pencarian_arsip','Pencarian'],['save','dashboard.php?mod=arsip&sub=backup_restore','Backup & Restore'],['bar-chart-2','dashboard.php?mod=laporan&sub=laporan_arsip','Laporan Arsip']]];
 ?>
 <div class="page-hero">
     <div><h2>Selamat datang, <?= htmlspecialchars(explode(' ',$user['name'])[0]) ?> 👋</h2>
@@ -257,16 +257,12 @@ $db_kryw = $conn->query("SELECT * FROM karyawan WHERE status='aktif'")->fetch_al
 $db_evs = $conn->query("SELECT * FROM event")->fetch_all(MYSQLI_ASSOC);
 $db_mnt = $conn->query("SELECT * FROM maintenance")->fetch_all(MYSQLI_ASSOC);
 $db_ars = $conn->query("SELECT * FROM arsip")->fetch_all(MYSQLI_ASSOC);
-$db_abs = $conn->query("SELECT * FROM absensi WHERE tanggal='".date('Y-m-d')."'")->fetch_all(MYSQLI_ASSOC);
-if(empty($db_abs)) $db_abs = $conn->query("SELECT * FROM absensi")->fetch_all(MYSQLI_ASSOC); // fallback if no data for today
 $db_pjm = $conn->query("SELECT * FROM peminjaman ORDER BY CAST(SUBSTRING(kode, 5) AS UNSIGNED) ASC")->fetch_all(MYSQLI_ASSOC);
 
 $tot_inv = count($db_inv);
 $inv_avail = count(array_filter($db_inv, fn($i)=>$i['status']==='tersedia'));
 
 $tot_kryw = count($db_kryw);
-$hadir = count(array_filter($db_abs, fn($a)=>$a['status']==='hadir'));
-$hadir_pct = $tot_kryw > 0 ? round(($hadir/$tot_kryw)*100) : 0;
 
 $tot_evs = count($db_evs);
 $ev_persiapan = count(array_filter($db_evs, fn($e)=>$e['status']==='persiapan'));
@@ -279,7 +275,6 @@ $pending_pjm = count(array_filter($db_pjm, fn($p)=>$p['status']==='pending'));
 ?>
 <div class="kpi-row">
     <div class="kpi k-blue"><div class="kpi-val"><?= $tot_inv ?></div><div class="kpi-lbl"><i data-lucide="package" style="width:14px;height:14px;"></i>  Total Barang</div><div class="kpi-chg" style="color:#27ae60;">▲ <?= $inv_avail ?> tersedia</div></div>
-    <div class="kpi k-green"><div class="kpi-val"><?= $hadir ?></div><div class="kpi-lbl"><i data-lucide="users" style="width:14px;height:14px;"></i>  Karyawan Hadir</div><div class="kpi-chg" style="color:#27ae60;"><?= $hadir_pct ?>% dari <?= $tot_kryw ?></div></div>
     <div class="kpi k-purple"><div class="kpi-val"><?= $tot_evs ?></div><div class="kpi-lbl"><i data-lucide="tent" style="width:14px;height:14px;"></i>  Event Aktif</div><div class="kpi-chg" style="color:#e67e22;"><?= $ev_persiapan ?> persiapan</div></div>
     <div class="kpi k-orange"><div class="kpi-val"><?= $tot_mnt ?></div><div class="kpi-lbl"><i data-lucide="wrench" style="width:14px;height:14px;"></i>  Fasilitas</div><div class="kpi-chg" style="color:#e74c3c;"><?= $mnt_rusak ?> perlu perbaikan</div></div>
     <div class="kpi k-teal"><div class="kpi-val"><?= number_format($tot_ars, 0, ',', '.') ?></div><div class="kpi-lbl"><i data-lucide="folder" style="width:14px;height:14px;"></i>  Dokumen Arsip</div></div>
@@ -373,58 +368,7 @@ case 'maintenance': include __DIR__.'/pages/maintenance.php'; break;
 case 'arsip':       include __DIR__.'/pages/arsip.php';       break;
 case 'laporan':     include __DIR__.'/pages/laporan.php';     break;
 
-// ─── ABSENSI ───────────────────────────────────────────────────────────────
-case 'absensi':
-    $absSub = $sub ?: (in_array($role,['admin','admin_hr']) ? 'rekap_absensi' : 'absensi_harian');
-?>
-<?php if(in_array($role,['admin','admin_hr'])): ?>
-<div class="tab-nav-bar">
-    <a href="?mod=absensi&sub=rekap_absensi" class="tab-link <?= $absSub==='rekap_absensi'?'active':'' ?>"><i data-lucide="clipboard-list"></i> Rekap Absensi</a>
-    <a href="?mod=absensi&sub=cek_absensi"   class="tab-link <?= $absSub==='cek_absensi'?'active':'' ?>"><i data-lucide="search"></i> Cek Absensi</a>
-</div>
-<?php endif; ?>
-<div class="card">
-    <div class="card-header">
-        <div class="card-title"><i data-lucide="clipboard-list"></i> <?= in_array($role,['admin','admin_hr']) ? ($absSub==='cek_absensi'?'Cek Absensi per Karyawan':'Rekap Absensi') : 'Absensi Harian Saya' ?> &mdash; <?= date('d F Y') ?></div>
-        <?php if(!in_array($role,['admin','admin_hr'])): ?>
-        <div class="flex gap-2">
-            <button class="btn btn-success" onclick="doCheckin()">📍 Check In</button>
-            <button class="btn btn-warning" onclick="doCheckout()"><i data-lucide="home"></i> Check Out</button>
-        </div>
-        <?php endif; ?>
-    </div>
-    <div class="table-wrap">
-        <table>
-            <thead><tr><th>Nama</th><th>Unit</th><th>Tanggal</th><th>Masuk</th><th>Keluar</th><th>Status</th><th>Keterangan</th></tr></thead>
-            <tbody id="tbodyAbsensi">
-                <tr><td colspan="7" style="text-align:center;padding:28px;color:#6b8070;">Memuat data...</td></tr>
-            </tbody>
-        </table>
-    </div>
-</div>
-<script>
-async function loadAbsensi(){
-    const data = await apiFetch('absensi','list',{},'GET');
-    const tbody = document.getElementById('tbodyAbsensi');
-    if(!data.ok||!data.data.length){ tbody.innerHTML='<tr><td colspan="7" style="text-align:center;padding:28px;color:#6b8070;">Belum ada data absensi.</td></tr>'; return; }
-    tbody.innerHTML = data.data.map(a=>{
-        const st = a.status==='hadir'?'<span class="badge badge-success"><i data-lucide="check-circle"></i> Hadir</span>':a.status==='izin'?'<span class="badge badge-warning">🤒 Izin/Sakit</span>':'<span class="badge badge-purple">🌴 Cuti</span>';
-        return `<tr><td><strong>${a.nama}</strong></td><td>${a.unit}</td><td>${a.tanggal}</td><td>${a.masuk||'—'}</td><td>${a.keluar||'—'}</td><td>${st}</td><td><span style="font-size:12px;color:#6b8070;">${a.keterangan||'—'}</span></td></tr>`;
-    }).join('');
-}
-async function doCheckin(){
-    const r = await apiFetch('absensi','checkin',{},'POST');
-    toast(r.ok ? `✅ Check in berhasil jam ${r.data?.masuk||''}!` : r.msg, r.ok?'success':'error');
-    if(r.ok) setTimeout(()=>location.reload(),900);
-}
-async function doCheckout(){
-    const r = await apiFetch('absensi','checkout',{},'POST');
-    toast(r.ok ? `🏠 Check out berhasil jam ${r.data?.keluar||''}!` : r.msg, r.ok?'success':'error');
-    if(r.ok) setTimeout(()=>location.reload(),900);
-}
-loadAbsensi();
-</script>
-<?php break;
+
 
 // ─── AKTIVITAS ─────────────────────────────────────────────────────────────
 case 'aktivitas':
@@ -509,7 +453,6 @@ case 'notifikasi':
         ['package','3 peminjaman barang menunggu approval Admin','5 menit lalu','unread','dashboard.php?mod=inventory&sub=approval'],
         ['wrench','Maintenance AC Lab Komputer jatuh tempo besok','1 jam lalu','unread','dashboard.php?mod=maintenance&sub=jadwal_maint'],
         ['tent','Event Wisuda Angkatan 2025 — persiapan H-7','3 jam lalu','unread','dashboard.php?mod=event&sub=daftar_event'],
-        ['clipboard-list','Rekap absensi bulan Juni sudah tersedia','Kemarin','read','dashboard.php?mod=absensi'],
         ['folder','Backup arsip sistem berhasil dilakukan','2 hari lalu','read','dashboard.php?mod=arsip&sub=backup_restore'],
         ['check-circle','Peminjaman Sound System JBL telah disetujui','3 hari lalu','read','dashboard.php?mod=inventory&sub=riwayat'],
     ];
@@ -677,7 +620,7 @@ case 'profile':
             <div class="card-header"><div class="card-title">🛡️ Akses Modul</div></div>
             <div class="card-body">
                 <?php
-                $modIcons=['inventory'=>'package','karyawan'=>'users','absensi'=>'clipboard-list','aktivitas'=>'pencil','event'=>'tent','maintenance'=>'wrench','arsip'=>'folder','laporan'=>'bar-chart-2'];
+                $modIcons=['inventory'=>'package','karyawan'=>'users','aktivitas'=>'pencil','event'=>'tent','maintenance'=>'wrench','arsip'=>'folder','laporan'=>'bar-chart-2'];
                 $allMods=getRoleModules($role);
                 foreach($allMods as $m): echo '<span class="badge badge-success" style="margin:3px;">'.(isset($modIcons[$m])?$modIcons[$m]:'🔹').' '.ucfirst(str_replace('_',' ',$m)).'</span>'; endforeach; ?>
             </div>

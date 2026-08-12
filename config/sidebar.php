@@ -97,7 +97,6 @@ if (isset($conn)) {
 
         <?= sideSection('SDM & Karyawan') ?>
         <?= sideNavItem('dashboard.php?mod=karyawan&sub=data_karyawan',       'users','Kelola Data Karyawan',  'karyawan',$mod,$sub,'data_karyawan') ?>
-        <?= sideNavItem('dashboard.php?mod=karyawan&sub=rekap_absensi',       'clipboard-list','Rekap Absensi',          'karyawan',$mod,$sub,'rekap_absensi') ?>
         <?= sideNavItem('dashboard.php?mod=karyawan&sub=monitoring_aktivitas','file-signature','Monitoring Aktivitas',   'karyawan',$mod,$sub,'monitoring_aktivitas') ?>
         <?= sideNavItem('dashboard.php?mod=karyawan&sub=monitoring_kinerja',  'bar-chart-2','Monitoring Kinerja',     'karyawan',$mod,$sub,'monitoring_kinerja') ?>
 
@@ -150,8 +149,7 @@ if (isset($conn)) {
         <?= sideSection('Menu Saya') ?>
         <?= sideNavItem('dashboard.php?mod=karyawan&sub=profil','user','Lihat / Edit Profil','karyawan',$mod,$sub,'profil') ?>
 
-        <?= sideSection('Absensi & Aktivitas') ?>
-        <?= sideNavItem('dashboard.php?mod=absensi&sub=absensi_harian',      'clipboard-list','Absensi Harian',       'absensi', $mod,$sub,'absensi_harian') ?>
+        <?= sideSection('Aktivitas') ?>
         <?= sideNavItem('dashboard.php?mod=aktivitas&sub=input_aktivitas',   'pencil','Input Aktivitas Harian','aktivitas',$mod,$sub,'input_aktivitas') ?>
         <?= sideNavItem('dashboard.php?mod=aktivitas&sub=riwayat_aktivitas', 'file-signature','Riwayat Aktivitas',    'aktivitas',$mod,$sub,'riwayat_aktivitas') ?>
 
@@ -169,10 +167,6 @@ if (isset($conn)) {
         <?php elseif ($role === 'admin_hr'): ?>
         <?= sideSection('Manajemen Karyawan') ?>
         <?= sideNavItem('dashboard.php?mod=karyawan&sub=data_karyawan','users','Kelola Data Karyawan','karyawan',$mod,$sub,'data_karyawan') ?>
-
-        <?= sideSection('Absensi') ?>
-        <?= sideNavItem('dashboard.php?mod=absensi&sub=rekap_absensi','clipboard-list','Rekap Absensi','absensi',$mod,$sub,'rekap_absensi') ?>
-        <?= sideNavItem('dashboard.php?mod=absensi&sub=cek_absensi', 'search','Cek Absensi',  'absensi',$mod,$sub,'cek_absensi') ?>
 
         <?= sideSection('Aktivitas & Kinerja') ?>
         <?= sideNavItem('dashboard.php?mod=karyawan&sub=monitoring_aktivitas','file-signature','Monitoring Aktivitas','karyawan',$mod,$sub,'monitoring_aktivitas') ?>

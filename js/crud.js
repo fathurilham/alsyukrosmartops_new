@@ -783,49 +783,6 @@ window.ArsipCRUD = {
 };
 
 // ═══════════════════════════════════════════════════
-// ABSENSI CRUD
-// ═══════════════════════════════════════════════════
-window.AbsensiCRUD = {
-    async load(tbodyId='absensiTbody') {
-        const tbody=document.getElementById(tbodyId);
-        if(!tbody) return;
-        tbody.innerHTML=`<tr class="loading-row"><td colspan="6">⏳ Memuat...</td></tr>`;
-        const res=await apiFetch('absensi','list',{},'GET');
-        const items=res.data||res;
-        if(!items.length){tbody.innerHTML=`<tr><td colspan="6"><div class="empty-state"><div class="ei">📋</div><p>Belum ada data absensi</p></div></td></tr>`;return;}
-        const sb=(s)=>({hadir:'<span style="background:#d4edda;color:#155724;padding:3px 9px;border-radius:12px;font-size:11px;font-weight:600">✅ Hadir</span>',
-            izin:'<span style="background:#fff3cd;color:#856404;padding:3px 9px;border-radius:12px;font-size:11px;font-weight:600">🤒 Izin/Sakit</span>',
-            cuti:'<span style="background:#d1ecf1;color:#0c5460;padding:3px 9px;border-radius:12px;font-size:11px;font-weight:600">🌴 Cuti</span>',
-            absen:'<span style="background:#fdecea;color:#c0392b;padding:3px 9px;border-radius:12px;font-size:11px;font-weight:600">❌ Absen</span>'})[s]||s;
-        tbody.innerHTML=items.map(a=>`<tr>
-            <td><strong>${a.nama}</strong></td><td>${a.unit}</td>
-            <td>${a.masuk||'<span style="color:#aaa">—</span>'}</td>
-            <td>${a.keluar||'<span style="color:#aaa">—</span>'}</td>
-            <td>${sb(a.status)}</td>
-            <td style="font-size:12px;color:#5a7a64">${a.keterangan||'—'}</td>
-        </tr>`).join('');
-        // Update summary
-        const hadir=items.filter(x=>x.status==='hadir').length;
-        const total=items.length;
-        document.getElementById('absHadir')&&(document.getElementById('absHadir').textContent=hadir);
-        document.getElementById('absTotal')&&(document.getElementById('absTotal').textContent=total);
-        document.getElementById('absPct')&&(document.getElementById('absPct').textContent=Math.round(hadir/total*100)+'%');
-    },
-
-    async checkIn() {
-        const res=await apiFetch('absensi','checkin',{});
-        if(res.ok){toast(`Absen masuk berhasil! Jam ${res.data.masuk} ✅`,'success');this.load();}
-        else toast(res.msg||'Gagal','error');
-    },
-
-    async checkOut() {
-        const res=await apiFetch('absensi','checkout',{});
-        if(res.ok){toast(`Absen keluar berhasil! Jam ${res.data.keluar} 👋`,'success');this.load();}
-        else toast(res.msg||'Gagal','error');
-    }
-};
-
-// ═══════════════════════════════════════════════════
 // AKTIVITAS CRUD
 // ═══════════════════════════════════════════════════
 window.AktivitasCRUD = {
@@ -869,7 +826,6 @@ window.AktivitasCRUD = {
 const _origInit = document.addEventListener;
 document.addEventListener('DOMContentLoaded', () => {
     if(document.getElementById('arsipTbody'))   ArsipCRUD.load();
-    if(document.getElementById('absensiTbody')) AbsensiCRUD.load();
     if(document.getElementById('aktivTbody'))   AktivitasCRUD.load('aktivTbody', true);
     if(document.getElementById('monitorTbody')) AktivitasCRUD.load('monitorTbody', false);
 });

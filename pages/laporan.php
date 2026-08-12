@@ -8,7 +8,6 @@ $kryw = $conn->query("SELECT * FROM karyawan")->fetch_all(MYSQLI_ASSOC);
 $evs  = $conn->query("SELECT * FROM event")->fetch_all(MYSQLI_ASSOC);
 $mnt  = $conn->query("SELECT * FROM maintenance")->fetch_all(MYSQLI_ASSOC);
 $arsip= $conn->query("SELECT * FROM arsip")->fetch_all(MYSQLI_ASSOC);
-$abs  = $conn->query("SELECT * FROM absensi")->fetch_all(MYSQLI_ASSOC);
 
 $sub = $_GET['sub'] ?? '';
 if (!$sub) {
@@ -57,7 +56,7 @@ if ($sub === 'dashboard_analitik'): ?>
     </div>
     <div class="stat-card c-green"><div class="stat-icon c-green">👥</div>
         <div class="stat-info"><h3><?= count($kryw) ?></h3><p>Total Karyawan Aktif</p>
-            <div class="stat-change up">▲ <?= round(count(array_filter($abs,fn($a)=>$a['status']==='hadir'))/max(1,count($abs))*100) ?>% kehadiran</div>
+            <div class="stat-change up">▲ <?= count(array_filter($kryw,fn($k)=>$k['status']==='aktif')) ?> aktif</div>
         </div>
     </div>
     <div class="stat-card c-purple"><div class="stat-icon c-purple">🎪</div>
@@ -80,7 +79,7 @@ if ($sub === 'dashboard_analitik'): ?>
             <?php
             $modPerf=[
                 ['📦 Inventaris',round(count(array_filter($inv,fn($i)=>$i['status']==='tersedia'))/max(1,count($inv))*100),'#2980b9','Ketersediaan barang'],
-                ['👥 SDM',round(count(array_filter($abs,fn($a)=>$a['status']==='hadir'))/max(1,count($abs))*100),'#27ae60','Tingkat kehadiran'],
+                ['👥 SDM',round(count(array_filter($kryw,fn($k)=>$k['status']==='aktif'))/max(1,count($kryw))*100),'#27ae60','Karyawan aktif'],
                 ['🎪 Event',round(count(array_filter($evs,fn($e)=>$e['status']==='selesai'))/max(1,count($evs))*100),'#9b59b6','Event selesai'],
                 ['🔧 Fasilitas',round(count(array_filter($mnt,fn($m)=>$m['kondisi']==='baik'))/max(1,count($mnt))*100),'#e67e22','Kondisi baik'],
                 ['📁 Arsip',min(100,round(count($arsip)/20*100)),'#5a7a64','Volume dokumen'],
@@ -106,7 +105,7 @@ if ($sub === 'dashboard_analitik'): ?>
             $summaries=[
                 ['Total barang dalam gudang','#eaf4fb',count($inv),'📦'],
                 ['Peminjaman aktif saat ini','#fff8e1',count(array_filter($conn->query("SELECT * FROM peminjaman")->fetch_all(MYSQLI_ASSOC),fn($p)=>$p['status']==='dipinjam')),'🔄'],
-                ['Karyawan hadir hari ini','#eafaf1',count(array_filter($abs,fn($a)=>$a['status']==='hadir')),'✅'],
+                ['Total Karyawan Aktif','#eafaf1',count(array_filter($kryw,fn($k)=>$k['status']==='aktif')),'✅'],
                 ['Event dalam persiapan','#f4ecf7',count(array_filter($evs,fn($e)=>$e['status']==='persiapan')),'🎪'],
                 ['Fasilitas perlu perbaikan','#fdedec',count(array_filter($mnt,fn($m)=>$m['kondisi']!=='baik')),'⚠️'],
                 ['Total dokumen arsip','#f0f5f2',count($arsip),'📁'],
@@ -181,27 +180,7 @@ elseif ($sub === 'laporan_sdm'): ?>
             <?php endforeach; ?>
         </div>
     </div>
-    <div class="card">
-        <div class="card-header"><div class="card-title">📋 Rekap Kehadiran Bulan Ini</div></div>
-        <div class="card-body">
-            <?php
-            $hd=count(array_filter($abs,fn($a)=>$a['status']==='hadir'));
-            $iz=count(array_filter($abs,fn($a)=>in_array($a['status'],['izin','sakit'])));
-            $ct=count(array_filter($abs,fn($a)=>$a['status']==='cuti'));
-            $ab=count($abs)-$hd-$iz-$ct;
-            $total=max(1,count($abs));
-            $kehadiran=[['Hadir',$hd,$total,'#27ae60'],['Izin/Sakit',$iz,$total,'#f39c12'],['Cuti',$ct,$total,'#3498db'],['Absen',$ab,$total,'#e74c3c']];
-            foreach($kehadiran as $kh): $p=round($kh[1]/$kh[2]*100); ?>
-            <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px;">
-                <div style="width:44px;height:44px;border-radius:50%;background:<?= $kh[3] ?>22;display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:800;color:<?= $kh[3] ?>;"><?= $kh[1] ?></div>
-                <div style="flex:1;">
-                    <div class="flex justify-between" style="margin-bottom:4px;"><span style="font-size:13px;font-weight:600;"><?= $kh[0] ?></span><span style="font-size:12px;color:#6b8070;"><?= $p ?>%</span></div>
-                    <div class="progress-bar"><div class="progress-fill" style="width:<?= $p ?>%;background:<?= $kh[3] ?>;"></div></div>
-                </div>
-            </div>
-            <?php endforeach; ?>
-        </div>
-    </div>
+
 </div>
 
 <?php
